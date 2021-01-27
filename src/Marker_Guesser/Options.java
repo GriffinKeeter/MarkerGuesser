@@ -20,6 +20,13 @@ public class Options {
 		return nImages;
 	}
 	
+	public static boolean saveSteps() {	
+		GenericDialog d1 = new GenericDialog("saving steps");
+		
+		YesNoCancelDialog dl = new YesNoCancelDialog(WindowManager.getFrame("saving steps"), "","Save intermediate steps as images?");
+		return dl.yesPressed();
+	}
+	
 	public static int getSizeofMarker() {	
 		String macro = "diam = getNumber(\"diameter of area around object: \", 15);\n"+
 				"string_out = \"\"+diam;\r\n" + 
@@ -30,10 +37,20 @@ public class Options {
 		return diam;
 	}
 	
-	public static int getDilateIter() {
+	public static int getXYDilateIter() {
 		String macro = 
-				"radius = getNumber(\"Dilation amount (pixel radius): \", 15);\n"+
-				"string_out = \"\"+radius;\r\n" + 
+				"radius = getNumber(\"Enter xy radius: \", 20);\n" + 
+				"string_out = \"\"+radius;\n" + 
+				"return string_out;";
+		Macro_Runner mr1 = new Macro_Runner();
+		String dilateIter_string = mr1.runMacro(macro, "");
+		int dilateIter = Integer.parseInt(dilateIter_string);
+		return dilateIter;
+	}
+	public static int getZDilateIter() {
+		String macro = 
+				"dilateZ = getNumber(\"Enter z radius: \", 10);\n" + 
+				"string_out = \"\"+dilateZ;\n" + 
 				"return string_out;";
 		Macro_Runner mr1 = new Macro_Runner();
 		String dilateIter_string = mr1.runMacro(macro, "");

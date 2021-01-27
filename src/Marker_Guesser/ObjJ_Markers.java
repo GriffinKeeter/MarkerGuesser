@@ -76,7 +76,7 @@ public class ObjJ_Markers {
 						"	y = round(columns[y_col]);\r\n" + 
 						"	z = round(columns[z_col]);\r\n" + //20-7 40-14
 						"	print(x+\",\"+y+\",\"+z+\",\"+channel);\r\n" + 
-						
+						"ojShowImage(1);\r\n" + 
 						"	Stack.setPosition(channel, z, 1);" +
 						"	ojSwitchToItem(name);\r\n" + 
 						"	ojSetMarker(x, y);\r\n" + 

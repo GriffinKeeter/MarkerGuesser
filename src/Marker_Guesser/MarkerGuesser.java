@@ -20,22 +20,25 @@ public class MarkerGuesser implements PlugIn {
 	public String[] marker_names;
 	public int numImages;
 	public int dilate_iter;
+	public int dilate_z_iter;
 	public void run(String arg) {
 		Macro_Runner m1 = new Macro_Runner();
 		m1.runMacro("ojShowImage(1);run(\"Duplicate...\", \"duplicate\");", "");
-		ImagePlus imageStack1 = WindowManager.getCurrentImage(); //you might want to change the imageStacks to an array so you don't only have the ability to use 2
-
-
+		ImagePlus imageStack1 = WindowManager.getCurrentImage();
 		
-		
+		//String lis = new Macro_Runner().runMacro("lis = call(\"ij.Prefs.get\", \"pre.thresh_bias\", \"this is wrong\"); showMessage(lis); return lis", "");
+		//IJ.error(lis);
+		//int lis2 = Integer.valueOf(lis);
+		//boolean save_steps = Options.saveSteps();
 		numImages = Options.getNImages();
 		marker_names = Options.getMarkersforChannels(imageStack1);
 
+
 		
-		
-		
-		dilate_iter = Options.getDilateIter();
-		Mask_and_Filter filter_model = new Mask_and_Filter(imageStack1, dilate_iter);
+		dilate_iter = Options.getXYDilateIter();
+		dilate_z_iter = Options.getZDilateIter();
+		boolean save_steps = false;
+		Mask_and_Filter filter_model = new Mask_and_Filter(imageStack1, dilate_iter, dilate_z_iter, save_steps);
 		
 		imageStack1 = filter_model.run("model", marker_names);
 		//future - Add warning if the directory path is different for second imageStack
@@ -68,11 +71,16 @@ public class MarkerGuesser implements PlugIn {
 			}
 		}
 		
-		new Macro_Runner().runMacro("ojShowImage(1);\n" + 
+		new Macro_Runner().runMacro(""
+				+ "ojShowImage(1);\n" + 
+				"nums = \"\";\n" + 
 				"for(i = ojFirstObject(1); i <= ojLastObject(1); i ++){\n" + 
-				"	ojQualify(i, false);\n" + 
-				"}", "");
-		
-		
+				"	ojSelectObject(i);\n" + 
+				"	//ojQualify(i, false);\n" + 
+				"	id = ojIndexToId(i);\n" + 
+				"	nums += \"\"+id+\",\";	\n" + 
+				"}\n" + 
+				"call(\"ij.Prefs.set\", \"pre.val0\", nums);\n" + 
+				"call(\"ij.Prefs.set\", \"pre.qual_tog\", true);", "");
 	}
 }

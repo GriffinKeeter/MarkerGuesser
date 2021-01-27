@@ -31,7 +31,7 @@ public class Dilator {
 	private byte[][] pixels_in;
 	private byte[][] pixels_out;
 
-	public ImagePlus dilate(ImagePlus image, int threshold, boolean newWin){
+	public ImagePlus dilate(ImagePlus image, int threshold, boolean dilateZ, boolean newWin){
 
 		// Determine dimensions of the image
 		w = image.getWidth(); 
@@ -50,17 +50,20 @@ public class Dilator {
 			for(int y = 0; y < h; y++) {
 				for(int x = 0; x < w; x++) {
 					boolean fill = false;
-					if( get(x, y, z) > threshold ||
+					
+					if( get(x, y, z) > threshold ||				//dilates within xy plane
 							get(x-1, y, z) > threshold ||
 							get(x+1, y, z) > threshold ||
 							get(x, y-1, z) > threshold ||
-							get(x, y+1, z) > threshold ||
-							get(x, y, z-1) > threshold ||
-							get(x, y, z+1) > threshold) {
+							get(x, y+1, z) > threshold) {
 
 						fill = true;
-					}else {
-						fill = false;
+					}
+					if(	(dilateZ) &&(							//dilates in z direction if dilateZ == true
+							get(x, y, z-1) > threshold ||
+							get(x, y, z+1) > threshold)) {
+
+						fill = true;
 					}
 					
 					if(fill == true) {
